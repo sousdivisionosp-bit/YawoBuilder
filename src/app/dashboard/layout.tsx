@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LayoutDashboard, Globe, Settings, LogOut, Plus, Bell, Search, User, CreditCard, UtensilsCrossed, Package, Shield, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Globe, Settings, LogOut, Plus, Bell, Search, User, CreditCard, UtensilsCrossed, Package, Shield, Menu, X, Presentation } from 'lucide-react';
 
 export default function DashboardLayout({
   children,
@@ -106,6 +106,14 @@ export default function DashboardLayout({
           >
             <Package size={22} />
             <span className="font-bold">Mon App de Gestion</span>
+          </Link>
+          <Link 
+            href="/dashboard/slides" 
+            onClick={() => setIsSidebarOpen(false)}
+            className="flex items-center space-x-3 px-4 py-3.5 rounded-xl text-gray-500 hover:bg-gray-50 hover:text-blue-600 transition-all"
+          >
+            <Presentation size={22} />
+            <span className="font-bold">Présentation Projet</span>
           </Link>
           <Link 
             href="/dashboard/billing" 
