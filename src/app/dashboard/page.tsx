@@ -38,25 +38,25 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="space-y-10">
-      <div className="flex justify-between items-end">
+    <div className="space-y-6 lg:space-y-10">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <h2 className="text-4xl font-black text-gray-900 tracking-tight">Tableau de bord</h2>
-          <p className="text-gray-500 mt-2 font-medium">Vous avez <span className="text-blue-600 font-bold">{sites.length} projets</span> actifs en cours.</p>
+          <h2 className="text-3xl lg:text-4xl font-black text-gray-900 tracking-tight">Tableau de bord</h2>
+          <p className="text-gray-500 mt-1 lg:mt-2 font-medium">Vous avez <span className="text-blue-600 font-bold">{sites.length} projets</span> actifs en cours.</p>
         </motion.div>
         
-        <Link href="/dashboard/templates">
-          <Button className="flex items-center gap-2 rounded-xl h-12 px-6 bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-100 font-bold transition-all hover:scale-105">
+        <Link href="/dashboard/templates" className="w-full sm:w-auto">
+          <Button className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl h-12 px-6 bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-100 font-bold transition-all hover:scale-105">
             <Plus size={20} strokeWidth={3} />
             Nouveau Projet
           </Button>
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
         {sites.map((site, index) => (
           <motion.div
             key={site.id || `site-${index}`}

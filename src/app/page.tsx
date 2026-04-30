@@ -76,8 +76,8 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-24 pb-32 px-6 md:px-12 overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-blue-50/50 rounded-[100%] blur-3xl -z-10 opacity-50"></div>
+      <section className="relative pt-16 lg:pt-24 pb-20 lg:pb-32 px-6 md:px-12 overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full lg:w-[1000px] h-[400px] lg:h-[600px] bg-blue-50/50 rounded-[100%] blur-3xl -z-10 opacity-50"></div>
         
         <div className="max-w-7xl mx-auto text-center relative">
           <motion.div
@@ -85,14 +85,14 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <span className="inline-block py-1.5 px-4 rounded-full bg-blue-50 text-blue-600 text-sm font-bold mb-6 border border-blue-100 uppercase tracking-widest">
+            <span className="inline-block py-1.5 px-4 rounded-full bg-blue-50 text-blue-600 text-xs lg:text-sm font-bold mb-6 border border-blue-100 uppercase tracking-widest">
               Propulsez votre business en Afrique 🌍
             </span>
-            <h1 className="text-6xl md:text-8xl font-black tracking-tight mb-8 leading-[1.1] text-gray-900">
-              YawoBuild : Le futur du <br />
+            <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black tracking-tight mb-6 lg:mb-8 leading-[1.1] text-gray-900">
+              YawoBuild : Le futur du <br className="hidden sm:block" />
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 italic">digital simplifié.</span>
             </h1>
-            <p className="text-xl md:text-2xl text-gray-500 mb-12 max-w-3xl mx-auto leading-relaxed font-medium">
+            <p className="text-lg lg:text-2xl text-gray-500 mb-8 lg:mb-12 max-w-3xl mx-auto leading-relaxed font-medium px-4">
               La plateforme tout-en-un pour créer, gérer et développer votre présence en ligne. Payez par <span className="text-blue-600 font-black">Mobile Money</span> et lancez-vous en quelques minutes.
             </p>
           </motion.div>
@@ -101,7 +101,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-20"
+            className="flex flex-col sm:flex-row gap-4 lg:gap-6 justify-center items-center mb-12 lg:mb-20"
           >
             <Button 
               onClick={() => { setAuthMode('signup'); setShowAuth(true); }}
@@ -111,7 +111,7 @@ export default function LandingPage() {
               Créer mon compte
               <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
-            <div className="flex items-center gap-6 text-sm font-black text-gray-400 uppercase tracking-widest">
+            <div className="flex flex-col sm:flex-row items-center gap-4 lg:gap-6 text-[10px] lg:text-sm font-black text-gray-400 uppercase tracking-widest">
               <span className="flex items-center gap-2"><CheckCircle2 size={16} className="text-green-500" /> Pas de CB</span>
               <span className="flex items-center gap-2"><CheckCircle2 size={16} className="text-green-500" /> Mobile Money OK</span>
             </div>

@@ -89,7 +89,7 @@ export default function GestionPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-10 pb-20">
+    <div className="max-w-6xl mx-auto space-y-6 lg:space-y-10 pb-20 px-4 lg:px-0">
       <AnimatePresence mode="wait">
         {step === 'landing' && (
           <motion.div
@@ -97,18 +97,18 @@ export default function GestionPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="space-y-10"
+            className="space-y-6 lg:space-y-10"
           >
-            <div className="flex justify-between items-end">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-6">
               <div>
-                <h2 className="text-4xl font-black text-gray-900 tracking-tight">Mon App de Gestion</h2>
+                <h2 className="text-3xl lg:text-4xl font-black text-gray-900 tracking-tight">Mon App de Gestion</h2>
                 <p className="text-gray-500 mt-2 font-medium">Gérez votre stock, vos ventes et vos produits avec une app PWA sur-mesure.</p>
               </div>
               
-              <div className="flex gap-4">
+              <div className="flex w-full md:w-auto">
                 <Button 
                   onClick={() => setStep('config')}
-                  className="flex items-center gap-2 rounded-xl h-12 px-6 bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-100 font-bold transition-all hover:scale-105"
+                  className="w-full md:w-auto flex items-center justify-center gap-2 rounded-xl h-12 px-6 bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-100 font-bold transition-all hover:scale-105"
                 >
                   Créer mon application
                 </Button>
@@ -116,44 +116,44 @@ export default function GestionPage() {
             </div>
 
             {/* Hero Section */}
-            <div className="grid lg:grid-cols-2 gap-10 items-center bg-white p-8 md:p-12 rounded-[40px] border border-gray-100 shadow-sm overflow-hidden relative">
+            <div className="grid lg:grid-cols-2 gap-10 items-center bg-white p-6 md:p-12 rounded-[32px] lg:rounded-[40px] border border-gray-100 shadow-sm overflow-hidden relative">
               <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50 rounded-full blur-3xl -mr-32 -mt-32 opacity-50"></div>
-              <div className="space-y-8 relative z-10">
+              <div className="space-y-6 lg:space-y-8 relative z-10">
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 rounded-full text-indigo-600 text-xs font-black uppercase tracking-widest">
                   <Zap size={14} className="fill-current" /> Technologie PWA
                 </div>
-                <h3 className="text-4xl md:text-5xl font-black text-gray-900 leading-tight">
+                <h3 className="text-3xl md:text-5xl font-black text-gray-900 leading-tight">
                   Votre business dans <span className="text-blue-600">votre poche</span>.
                 </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
                   <div className="flex gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
-                      <WifiOff size={24} />
+                    <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
+                      <WifiOff className="w-5 h-5 lg:w-6 lg:h-6" />
                     </div>
                     <div>
                       <h4 className="font-black text-gray-900 text-sm">Mode Offline</h4>
-                      <p className="text-gray-500 text-xs font-medium">Travaillez sans connexion, synchronisez plus tard.</p>
+                      <p className="text-gray-500 text-[11px] lg:text-xs font-medium">Travaillez sans connexion, synchronisez plus tard.</p>
                     </div>
                   </div>
                   <div className="flex gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center text-green-600 shrink-0">
-                      <Download size={24} />
+                    <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-2xl bg-green-50 flex items-center justify-center text-green-600 shrink-0">
+                      <Download className="w-5 h-5 lg:w-6 lg:h-6" />
                     </div>
                     <div>
                       <h4 className="font-black text-gray-900 text-sm">Installation Rapide</h4>
-                      <p className="text-gray-500 text-xs font-medium">S'installe comme une app native sur votre mobile.</p>
+                      <p className="text-gray-500 text-[11px] lg:text-xs font-medium">S'installe comme une app native sur votre mobile.</p>
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-col sm:row gap-4 pt-4">
-                  <Button onClick={() => setStep('config')} className="rounded-2xl h-14 px-8 bg-blue-600 hover:bg-blue-700 text-white font-black shadow-xl shadow-blue-100 transition-all">
+                <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                  <Button onClick={() => setStep('config')} className="w-full sm:w-auto rounded-2xl h-14 px-8 bg-blue-600 hover:bg-blue-700 text-white font-black shadow-xl shadow-blue-100 transition-all">
                     Commencer maintenant
                   </Button>
                 </div>
               </div>
               
-              <div className="relative flex justify-center lg:justify-end">
-                  <div className="relative w-full max-w-[320px] aspect-[9/19.5] bg-gray-900 rounded-[3rem] border-[8px] border-gray-800 shadow-2xl overflow-hidden group">
+              <div className="relative flex justify-center lg:justify-end mt-10 lg:mt-0">
+                  <div className="relative w-full max-w-[280px] lg:max-w-[320px] aspect-[9/19.5] bg-gray-900 rounded-[3rem] border-[8px] border-gray-800 shadow-2xl overflow-hidden group">
                     <div className="absolute inset-0 bg-white overflow-auto no-scrollbar">
                       <ClientAppDashboard 
                         appName={appName || "Ma Boutique"} 
@@ -177,22 +177,22 @@ export default function GestionPage() {
             key="config"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="grid lg:grid-cols-3 gap-8"
+            className="flex flex-col lg:grid lg:grid-cols-3 gap-8"
           >
             {/* Editor Side */}
             <div className="lg:col-span-2 space-y-6">
-              <Card className="border-none shadow-sm rounded-[32px] overflow-hidden">
-                <CardHeader className="p-8 border-b border-gray-50">
+              <Card className="border-none shadow-sm rounded-[24px] lg:rounded-[32px] overflow-hidden">
+                <CardHeader className="p-6 lg:p-8 border-b border-gray-50">
                   <div className="flex justify-between items-center">
-                    <CardTitle className="text-2xl font-black">Configuration de l'App</CardTitle>
+                    <CardTitle className="text-xl lg:text-2xl font-black">Configuration de l'App</CardTitle>
                     <span className="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black uppercase rounded-full">Étape 1/2</span>
                   </div>
                 </CardHeader>
-                <CardContent className="p-8 space-y-8">
+                <CardContent className="p-6 lg:p-8 space-y-8">
                   {/* Plan Selection */}
                   <div className="space-y-4">
                     <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Choisir votre Plan</label>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                       {[
                         { id: 'basic', name: 'Basic', price: '5$', period: '/ 3 mois', icon: <Star size={20} />, color: 'blue', feats: ['Vente', 'Stock simple', 'Offline'] },
                         { id: 'pro', name: 'Pro', price: '15$', period: '', icon: <Shield size={20} />, color: 'indigo', feats: ['Rapports', 'Alertes', 'Multi-utilisateurs'] },
@@ -203,27 +203,27 @@ export default function GestionPage() {
                           onClick={() => setSelectedPlan(plan.id as any)}
                           className={`p-5 rounded-[24px] border-2 transition-all cursor-pointer relative overflow-hidden group ${
                             selectedPlan === plan.id 
-                              ? `border-${plan.color}-600 bg-${plan.color}-50/50` 
+                              ? `border-${plan.color === 'blue' ? 'blue-600' : plan.color === 'indigo' ? 'indigo-600' : 'purple-600'} bg-${plan.color === 'blue' ? 'blue-50/50' : plan.color === 'indigo' ? 'indigo-50/50' : 'purple-50/50'}` 
                               : 'border-gray-100 bg-white hover:border-gray-200'
                           }`}
                         >
                           {selectedPlan === plan.id && (
-                            <div className={`absolute top-2 right-2 w-5 h-5 bg-${plan.color}-600 rounded-full flex items-center justify-center text-white`}>
+                            <div className={`absolute top-2 right-2 w-5 h-5 bg-${plan.color === 'blue' ? 'blue-600' : plan.color === 'indigo' ? 'indigo-600' : 'purple-600'} rounded-full flex items-center justify-center text-white`}>
                               <Check size={12} strokeWidth={4} />
                             </div>
                           )}
-                          <div className={`w-10 h-10 rounded-xl bg-${plan.color}-100 flex items-center justify-center text-${plan.color}-600 mb-4`}>
+                          <div className={`w-10 h-10 rounded-xl bg-${plan.color === 'blue' ? 'blue-100' : plan.color === 'indigo' ? 'indigo-100' : 'purple-100'} flex items-center justify-center text-${plan.color === 'blue' ? 'blue-600' : plan.color === 'indigo' ? 'indigo-600' : 'purple-600'} mb-4`}>
                             {plan.icon}
                           </div>
                           <div className="font-black text-gray-900">{plan.name}</div>
                           <div className="flex items-baseline gap-1 mb-3">
-                            <span className={`text-xl font-black text-${plan.color}-600`}>{plan.price}</span>
+                            <span className={`text-xl font-black text-${plan.color === 'blue' ? 'blue-600' : plan.color === 'indigo' ? 'indigo-600' : 'purple-600'}`}>{plan.price}</span>
                             <span className="text-[10px] font-bold text-gray-400">{plan.period}</span>
                           </div>
                           <div className="space-y-1">
                             {plan.feats.map((f, i) => (
                               <div key={i} className="flex items-center gap-2 text-[9px] font-bold text-gray-500 uppercase tracking-tighter">
-                                <div className={`w-1 h-1 rounded-full bg-${plan.color}-400`} /> {f}
+                                <div className={`w-1 h-1 rounded-full bg-${plan.color === 'blue' ? 'blue-400' : plan.color === 'indigo' ? 'indigo-400' : 'purple-400'}`} /> {f}
                               </div>
                             ))}
                           </div>
@@ -232,9 +232,9 @@ export default function GestionPage() {
                     </div>
                   </div>
 
-                  <div className="flex flex-col md:flex-row gap-8 items-start pt-4 border-t border-gray-50">
+                  <div className="flex flex-col sm:flex-row gap-6 lg:gap-8 items-start pt-4 border-t border-gray-50">
                     {/* Logo Upload Simulation */}
-                    <div className="space-y-2">
+                    <div className="space-y-2 w-full sm:w-auto">
                       <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Logo de l'App</label>
                       <input 
                         type="file" 
@@ -245,7 +245,7 @@ export default function GestionPage() {
                       />
                       <div 
                         onClick={() => fileInputRef.current?.click()}
-                        className="w-32 h-32 bg-gray-50 border-2 border-dashed border-gray-200 rounded-[24px] flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-all group overflow-hidden"
+                        className="w-full sm:w-32 h-32 bg-gray-50 border-2 border-dashed border-gray-200 rounded-[24px] flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-all group overflow-hidden"
                       >
                         {appLogo ? (
                           <div className="relative w-full h-full group">
@@ -271,13 +271,13 @@ export default function GestionPage() {
                       )}
                     </div>
 
-                    <div className="flex-1 grid md:grid-cols-2 gap-6 w-full">
+                    <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6 w-full">
                       <div className="space-y-2">
                         <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Nom de votre application</label>
                         <input 
                           type="text" 
                           placeholder="Ex: Ma Boutique Gestion" 
-                          className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl text-lg font-bold outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                          className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl text-base lg:text-lg font-bold outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                           value={appName}
                           onChange={(e) => setAppName(e.target.value)}
                         />
@@ -285,7 +285,7 @@ export default function GestionPage() {
                       <div className="space-y-2">
                         <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Type d'activité</label>
                         <select 
-                          className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl text-lg font-bold outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none"
+                          className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl text-base lg:text-lg font-bold outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none"
                           value={businessType}
                           onChange={(e) => setBusinessType(e.target.value)}
                         >
@@ -298,7 +298,7 @@ export default function GestionPage() {
                       <div className="space-y-2">
                         <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Monnaie de gestion</label>
                         <select 
-                          className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl text-lg font-bold outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none"
+                          className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl text-base lg:text-lg font-bold outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none"
                           value={currency}
                           onChange={(e) => setCurrency(e.target.value)}
                         >
@@ -310,7 +310,7 @@ export default function GestionPage() {
                       </div>
                       <div className="space-y-2">
                         <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Couleur Thème</label>
-                        <div className="flex flex-wrap gap-3 p-2">
+                        <div className="flex flex-wrap gap-2 lg:gap-3 p-2">
                           {[
                             { name: 'Bleu', hex: '#2563eb' },
                             { name: 'Indigo', hex: '#4f46e5' },
@@ -324,7 +324,7 @@ export default function GestionPage() {
                             <button
                               key={c.hex}
                               onClick={() => setPrimaryColor(c.hex)}
-                              className={`w-10 h-10 rounded-full border-4 transition-all hover:scale-110 ${
+                              className={`w-8 h-8 lg:w-10 lg:h-10 rounded-full border-2 lg:border-4 transition-all hover:scale-110 ${
                                 primaryColor === c.hex ? 'border-gray-300 scale-110' : 'border-transparent'
                               }`}
                               style={{ backgroundColor: c.hex }}
@@ -338,7 +338,7 @@ export default function GestionPage() {
 
                   <div className="space-y-4 pt-4 border-t border-gray-50">
                     <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Fonctionnalités incluses</label>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4">
                       {[
                         { icon: <TrendingUp size={18} />, label: "Ventes & Bénéfices", desc: "Suivi en temps réel" },
                         { icon: <Plus size={18} />, label: "Ajout Rapide", desc: "Produits & Stock" },
@@ -362,17 +362,17 @@ export default function GestionPage() {
                 </CardContent>
               </Card>
 
-              <Card className="border-none shadow-sm rounded-[32px] overflow-hidden">
-                <CardHeader className="p-8 border-b border-gray-50 flex flex-row items-center justify-between">
-                  <CardTitle className="text-2xl font-black">Inventaire Initial</CardTitle>
-                  <Button onClick={addProduct} variant="outline" className="rounded-xl border-blue-100 text-blue-600 font-bold hover:bg-blue-50">
+              <Card className="border-none shadow-sm rounded-[24px] lg:rounded-[32px] overflow-hidden">
+                <CardHeader className="p-6 lg:p-8 border-b border-gray-50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <CardTitle className="text-xl lg:text-2xl font-black">Inventaire Initial</CardTitle>
+                  <Button onClick={addProduct} variant="outline" className="w-full sm:w-auto rounded-xl border-blue-100 text-blue-600 font-bold hover:bg-blue-50">
                     <Plus size={18} className="mr-2" /> Ajouter un produit
                   </Button>
                 </CardHeader>
-                <CardContent className="p-8 space-y-6">
+                <CardContent className="p-4 lg:p-8 space-y-4 lg:space-y-6">
                   {products.map((p) => (
-                    <div key={p.id} className="grid grid-cols-12 gap-4 items-end p-6 bg-gray-50 rounded-[24px] border border-gray-100 group transition-all hover:shadow-md hover:bg-white">
-                      <div className="col-span-5 space-y-2">
+                    <div key={p.id} className="flex flex-col sm:grid sm:grid-cols-12 gap-4 items-end p-4 lg:p-6 bg-gray-50 rounded-[20px] lg:rounded-[24px] border border-gray-100 group transition-all hover:shadow-md hover:bg-white">
+                      <div className="w-full sm:col-span-5 space-y-2">
                         <label className="text-[10px] font-black text-gray-400 uppercase">Désignation</label>
                         <input 
                           type="text" 
@@ -382,26 +382,28 @@ export default function GestionPage() {
                           placeholder="Nom du produit..."
                         />
                       </div>
-                      <div className="col-span-2 space-y-2">
-                        <label className="text-[10px] font-black text-gray-400 uppercase">Stock</label>
-                        <input 
-                          type="number" 
-                          value={p.stock}
-                          onChange={(e) => updateProduct(p.id, 'stock', parseInt(e.target.value) || 0)}
-                          className="w-full bg-white border border-gray-100 rounded-xl p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                      <div className="w-full grid grid-cols-2 sm:contents gap-4">
+                        <div className="sm:col-span-2 space-y-2">
+                          <label className="text-[10px] font-black text-gray-400 uppercase">Stock</label>
+                          <input 
+                            type="number" 
+                            value={p.stock}
+                            onChange={(e) => updateProduct(p.id, 'stock', parseInt(e.target.value) || 0)}
+                            className="w-full bg-white border border-gray-100 rounded-xl p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+                        <div className="sm:col-span-3 space-y-2">
+                          <label className="text-[10px] font-black text-gray-400 uppercase">Prix Vente ($)</label>
+                          <input 
+                            type="text" 
+                            value={p.price}
+                            onChange={(e) => updateProduct(p.id, 'price', e.target.value)}
+                            className="w-full bg-white border border-gray-100 rounded-xl p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="0.00"
+                          />
+                        </div>
                       </div>
-                      <div className="col-span-3 space-y-2">
-                        <label className="text-[10px] font-black text-gray-400 uppercase">Prix Vente ($)</label>
-                        <input 
-                          type="text" 
-                          value={p.price}
-                          onChange={(e) => updateProduct(p.id, 'price', e.target.value)}
-                          className="w-full bg-white border border-gray-100 rounded-xl p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder="0.00"
-                        />
-                      </div>
-                      <div className="col-span-2">
+                      <div className="w-full sm:col-span-2">
                         <Button 
                           onClick={() => removeProduct(p.id)}
                           variant="ghost" 
@@ -418,35 +420,30 @@ export default function GestionPage() {
 
             {/* Preview & Action Side */}
             <div className="space-y-6">
-              <div className="sticky top-6 space-y-6">
-                <Card className="border-none shadow-xl rounded-[32px] bg-gray-900 text-white p-8 space-y-6">
+              <div className="lg:sticky lg:top-6 space-y-6">
+                <Card className="border-none shadow-xl rounded-[24px] lg:rounded-[32px] bg-gray-900 text-white p-6 lg:p-8 space-y-6">
                   <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 bg-blue-600 rounded-[20px] flex items-center justify-center shadow-lg shadow-blue-500/20">
-                      <Smartphone size={28} />
+                    <div className="w-12 h-12 lg:w-14 lg:h-14 bg-blue-600 rounded-[16px] lg:rounded-[20px] flex items-center justify-center shadow-lg shadow-blue-500/20">
+                      <Smartphone className="w-6 h-6 lg:w-7 lg:h-7" />
                     </div>
                     <div>
-                      <h4 className="font-black text-xl">Prêt à Générer</h4>
-                      <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Optimisé pour Mobile</p>
+                      <h4 className="font-black text-lg lg:text-xl">Prêt à Générer</h4>
+                      <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Optimisé pour Mobile</p>
                     </div>
                   </div>
                   
-                  <div className="space-y-4 pt-4 border-t border-white/10">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-green-400"><Check size={16}/></div>
-                      <span className="text-sm font-medium">Tableau de bord Ventes & Stock</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-green-400"><Check size={16}/></div>
-                      <span className="text-sm font-medium">Alertes de Stock Critique</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-green-400"><Check size={16}/></div>
-                      <span className="text-sm font-medium">Rapports PDF téléchargeables</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-green-400"><Check size={16}/></div>
-                      <span className="text-sm font-medium">Système de Notifications</span>
-                    </div>
+                  <div className="space-y-3 lg:space-y-4 pt-4 border-t border-white/10">
+                    {[
+                      "Tableau de bord Ventes & Stock",
+                      "Alertes de Stock Critique",
+                      "Rapports PDF téléchargeables",
+                      "Système de Notifications"
+                    ].map((text, i) => (
+                      <div key={i} className="flex items-center gap-3">
+                        <div className="w-7 h-7 lg:w-8 lg:h-8 rounded-lg bg-white/5 flex items-center justify-center text-green-400"><Check className="w-3.5 h-3.5 lg:w-4 lg:h-4" /></div>
+                        <span className="text-xs lg:text-sm font-medium">{text}</span>
+                      </div>
+                    ))}
                   </div>
 
                   <Button 
@@ -458,7 +455,7 @@ export default function GestionPage() {
                   </Button>
                 </Card>
 
-                <div className="p-6 bg-blue-50 rounded-[32px] border border-blue-100 flex items-start gap-4">
+                <div className="p-6 bg-blue-50 rounded-[24px] lg:rounded-[32px] border border-blue-100 flex items-start gap-4">
                   <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shrink-0 shadow-lg shadow-blue-200">
                     <Info size={20} />
                   </div>
