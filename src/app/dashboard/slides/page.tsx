@@ -396,6 +396,8 @@ export default function SlidesPage() {
                         />
                       </div>
                     )}
+                  </div>
+
                   <div className="pt-4 border-t border-gray-50 flex justify-between gap-4">
                     <Button 
                       onClick={() => removeSlide(slides[currentSlideIndex].id)}

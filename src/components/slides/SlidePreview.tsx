@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { Image as ImageIcon, Type, Layout } from 'lucide-react';
 
 interface Slide {
@@ -26,7 +26,7 @@ export default function SlidePreview({ slides, currentIndex, primaryColor, fontF
 
   if (!slide) return null;
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -36,7 +36,7 @@ export default function SlidePreview({ slides, currentIndex, primaryColor, fontF
     }
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
   };
@@ -69,7 +69,7 @@ export default function SlidePreview({ slides, currentIndex, primaryColor, fontF
       )}
 
       <motion.div 
-        variants={containerVariants}
+        variants={containerVariants as any}
         initial="hidden"
         animate="visible"
         key={slide.id}
@@ -78,14 +78,14 @@ export default function SlidePreview({ slides, currentIndex, primaryColor, fontF
         {slide.layout === 'title-only' && (
           <div className="text-center space-y-8">
             <motion.h2 
-              variants={itemVariants}
+              variants={itemVariants as any}
               className={`text-6xl font-black leading-tight ${templateStyle === 'startup' ? 'text-white' : 'text-gray-900'}`}
               style={templateStyle !== 'startup' ? { color: primaryColor } : {}}
             >
               {slide.title || "Titre de la Présentation"}
             </motion.h2>
             <motion.div 
-              variants={itemVariants}
+              variants={itemVariants as any}
               className="w-32 h-2 mx-auto rounded-full"
               style={{ backgroundColor: primaryColor }}
             />
@@ -95,7 +95,7 @@ export default function SlidePreview({ slides, currentIndex, primaryColor, fontF
         {slide.layout === 'text-only' && (
           <div className="space-y-10 max-w-4xl mx-auto w-full">
             <motion.h3 
-              variants={itemVariants}
+              variants={itemVariants as any}
               className={`text-4xl font-black border-l-8 pl-6 ${templateStyle === 'startup' ? 'text-white' : 'text-gray-900'}`}
               style={{ borderColor: primaryColor }}
             >
@@ -107,7 +107,7 @@ export default function SlidePreview({ slides, currentIndex, primaryColor, fontF
                   {slide.bullets.map((bullet, i) => (
                     <motion.li 
                       key={i}
-                      variants={itemVariants}
+                      variants={itemVariants as any}
                       className="flex items-start gap-4 text-2xl font-medium"
                     >
                       <span className="mt-2 w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: primaryColor }} />
@@ -117,7 +117,7 @@ export default function SlidePreview({ slides, currentIndex, primaryColor, fontF
                 </ul>
               ) : (
                 <motion.p 
-                  variants={itemVariants}
+                  variants={itemVariants as any}
                   className={`text-2xl leading-relaxed whitespace-pre-wrap ${templateStyle === 'startup' ? 'text-gray-300' : 'text-gray-600'}`}
                 >
                   {slide.content || "Votre texte ici..."}
@@ -131,7 +131,7 @@ export default function SlidePreview({ slides, currentIndex, primaryColor, fontF
           <div className="grid grid-cols-2 gap-16 items-center h-full max-w-6xl mx-auto">
             <div className="space-y-10">
               <motion.h3 
-                variants={itemVariants}
+                variants={itemVariants as any}
                 className={`text-4xl font-black ${templateStyle === 'startup' ? 'text-white' : 'text-gray-900'}`}
                 style={templateStyle !== 'startup' ? { color: primaryColor } : {}}
               >
@@ -143,7 +143,7 @@ export default function SlidePreview({ slides, currentIndex, primaryColor, fontF
                     {slide.bullets.map((bullet, i) => (
                       <motion.li 
                         key={i}
-                        variants={itemVariants}
+                        variants={itemVariants as any}
                         className="flex items-start gap-3 text-xl font-medium"
                       >
                         <div className="mt-2 w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: primaryColor }} />
@@ -153,7 +153,7 @@ export default function SlidePreview({ slides, currentIndex, primaryColor, fontF
                   </ul>
                 ) : (
                   <motion.p 
-                    variants={itemVariants}
+                    variants={itemVariants as any}
                     className={`text-xl leading-relaxed whitespace-pre-wrap ${templateStyle === 'startup' ? 'text-gray-300' : 'text-gray-600'}`}
                   >
                     {slide.content || "Détails de l'analyse..."}
@@ -162,7 +162,7 @@ export default function SlidePreview({ slides, currentIndex, primaryColor, fontF
               </div>
             </div>
             <motion.div 
-              variants={itemVariants}
+              variants={itemVariants as any}
               className={`h-full min-h-[400px] rounded-[40px] shadow-2xl overflow-hidden relative group ${
                 templateStyle === 'startup' ? 'bg-white/5 border border-white/10' : 'bg-gray-100 border border-gray-200'
               }`}
