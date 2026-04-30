@@ -57,6 +57,7 @@ export default function ClientAppDashboard({
   const [showNewProductModal, setShowNewProductModal] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   
   const [selectedProductForAdd, setSelectedProductForAdd] = useState<string>('');
   const [addQuantity, setAddQuantity] = useState(5);
@@ -320,12 +321,24 @@ export default function ClientAppDashboard({
               <input 
                 type="text" 
                 placeholder="Rechercher un produit..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-12 pr-4 py-4 bg-white border border-gray-100 rounded-2xl text-sm font-bold shadow-sm outline-none focus:ring-2 focus:ring-blue-500"
               />
+              {searchQuery && (
+                <button 
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <X size={18} />
+                </button>
+              )}
             </div>
 
             <div className="space-y-3">
-              {products.map(product => (
+              {products
+                .filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()))
+                .map(product => (
                 <div key={product.id} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-black ${
@@ -343,6 +356,15 @@ export default function ClientAppDashboard({
                   <button className="p-2 bg-gray-50 rounded-xl text-gray-400"><MoreVertical size={18}/></button>
                 </div>
               ))}
+              
+              {products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
+                <div className="text-center py-10 space-y-2">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto text-gray-400">
+                    <Search size={24} />
+                  </div>
+                  <p className="text-gray-500 font-bold">Aucun produit trouvé</p>
+                </div>
+              )}
             </div>
           </motion.div>
         )}
