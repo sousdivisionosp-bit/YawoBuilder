@@ -46,6 +46,8 @@ export default function SlidesPage() {
       setIsAnalyzingPDF(true);
       setLoadingProgress(0);
       
+      const fileName = file.name.replace('.pdf', '');
+      
       const interval = setInterval(() => {
         setLoadingProgress(prev => {
           if (prev >= 100) {
@@ -56,14 +58,59 @@ export default function SlidesPage() {
         });
       }, 100);
 
-      // Simulation d'analyse IA du PDF
+      // Simulation d'analyse IA du PDF beaucoup plus riche
       setTimeout(() => {
         const generatedSlides: Slide[] = [
-          { id: 'p1', title: 'Résumé du Document', content: 'Analyse automatique de votre PDF.', layout: 'title-only' },
-          { id: 'p2', title: 'Points Clés', content: '', layout: 'text-only', bullets: ['Analyse de marché', 'Forces et Faiblesses', 'Opportunités détectées'] },
-          { id: 'p3', title: 'Conclusion', content: 'Prochaines étapes recommandées.', layout: 'split', image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80' }
+          { 
+            id: 'p1', 
+            title: fileName, 
+            content: 'Présentation générée automatiquement à partir de votre document.', 
+            layout: 'title-only' 
+          },
+          { 
+            id: 'p2', 
+            title: 'Résumé Exécutif', 
+            content: '', 
+            layout: 'text-only', 
+            bullets: [
+              'Analyse approfondie du document ' + fileName,
+              'Identification des enjeux stratégiques',
+              'Synthèse des points clés extraits par l\'IA'
+            ] 
+          },
+          { 
+            id: 'p3', 
+            title: 'Analyse Détaillée', 
+            content: 'Cette section reprend les données techniques extraites du fichier pour une meilleure lisibilité visuelle.', 
+            layout: 'split', 
+            bullets: [
+              'Données chiffrées clés',
+              'Tendances du secteur',
+              'Objectifs à court terme'
+            ],
+            image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80' 
+          },
+          { 
+            id: 'p4', 
+            title: 'Recommandations', 
+            content: 'Basé sur l\'analyse du document, voici les étapes suggérées.', 
+            layout: 'text-only', 
+            bullets: [
+              'Optimisation des ressources actuelles',
+              'Déploiement de la phase 2 du projet',
+              'Suivi des indicateurs de performance'
+            ] 
+          },
+          { 
+            id: 'p5', 
+            title: 'Conclusion', 
+            content: 'Merci de votre attention. Questions ?', 
+            layout: 'title-only' 
+          }
         ];
+        
         setSlides(generatedSlides);
+        setCurrentSlideIndex(0); // On commence par la première slide générée
         setIsAnalyzingPDF(false);
         setStep('editor');
       }, 3000);
