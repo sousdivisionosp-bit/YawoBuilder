@@ -26,6 +26,7 @@ interface Product {
 
 export default function GestionPage() {
   const [step, setStep] = useState<FlowStep>('landing');
+  const [isMobileVendeur, setIsMobileVendeur] = useState(false);
   const [hasApp, setHasApp] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'mpesa' | 'orange' | 'airtel' | null>(null);
   const [phone, setPhone] = useState('');
@@ -52,6 +53,12 @@ export default function GestionPage() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setBaseUrl(window.location.origin);
+      
+      // Détecter si on arrive via le lien d'installation mobile
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('app')) {
+        setIsMobileVendeur(true);
+      }
     }
   }, []);
 
@@ -143,6 +150,23 @@ export default function GestionPage() {
       reader.readAsDataURL(file);
     }
   };
+
+  // Si c'est un vendeur sur mobile, on affiche l'app directement sans rien d'autre
+  if (isMobileVendeur) {
+    return (
+      <div className="fixed inset-0 bg-white z-[9999] overflow-auto">
+        <ClientAppDashboard 
+          appName={appName || 'Ma Boutique'} 
+          appLogo={appLogo} 
+          currency={currency} 
+          plan={selectedPlan} 
+          primaryColor={primaryColor}
+          initialProducts={products} 
+          isDemo={false} 
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto space-y-6 lg:space-y-10 pb-20 px-4 lg:px-0">
