@@ -9,7 +9,7 @@ import {
   Layout, ShieldCheck, Download, RefreshCw, WifiOff, CreditCard, Plus, Trash2, Save,
   PlayCircle, Bell, Info, Check, Laptop, Image as ImageIcon, Upload,
   Settings as SettingsIcon, Database, Share2, Star, Shield, Building2, Store, Lightbulb,
-  QrCode, Copy, X
+  QrCode, Copy, X, ExternalLink
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ClientAppDashboard from '@/components/gestion/ClientAppDashboard';
@@ -46,6 +46,19 @@ export default function GestionPage() {
   const [appStats, setAppStats] = useState({ revenue: 0, profit: 0, transactions: 0 });
   const [recentSales, setRecentSales] = useState<any[]>([]);
   const [showInstallModal, setShowInstallModal] = useState(false);
+  const [showMobilePreview, setShowMobilePreview] = useState(false);
+  const [baseUrl, setBaseUrl] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setBaseUrl(window.location.origin);
+    }
+  }, []);
+
+  const getAppUrl = () => {
+    const slug = appName.toLowerCase().replace(/\s+/g, '-');
+    return `${baseUrl}/dashboard/gestion?app=${slug}`;
+  };
 
   useEffect(() => {
     const currentUser = localStorage.getItem('yawo_user_name') || 'DemoUser';
@@ -831,14 +844,29 @@ export default function GestionPage() {
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3">
                     <div className="flex-1 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 px-4 py-3 flex items-center justify-between gap-4">
-                      <span className="text-[10px] font-black uppercase tracking-widest truncate">yawo.app/g/{appName.toLowerCase().replace(/\s+/g, '-')}</span>
-                      <button className="p-2 hover:bg-white/20 rounded-lg transition-colors"><Copy size={16} /></button>
+                      <span className="text-[10px] font-black uppercase tracking-widest truncate">{getAppUrl().replace('https://', '')}</span>
+                      <button 
+                        onClick={() => {
+                          navigator.clipboard.writeText(getAppUrl());
+                          alert('Lien copié !');
+                        }}
+                        className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+                      >
+                        <Copy size={16} />
+                      </button>
                     </div>
                     <Button 
-                      onClick={() => setShowInstallModal(true)}
-                      className="bg-white text-blue-600 hover:bg-blue-50 font-black rounded-xl h-12 px-8"
+                      onClick={() => setShowMobilePreview(true)}
+                      className="bg-white text-blue-600 hover:bg-blue-50 font-black rounded-xl h-12 px-8 shadow-lg flex items-center gap-2"
                     >
-                      Installer sur mon mobile
+                      <Smartphone size={18} /> Tester
+                    </Button>
+                    <Button 
+                      variant="ghost"
+                      onClick={() => setShowInstallModal(true)}
+                      className="text-white/80 hover:text-white hover:bg-white/10 font-bold rounded-xl h-12 px-6"
+                    >
+                      QR Code
                     </Button>
                   </div>
                 </div>
@@ -965,8 +993,18 @@ export default function GestionPage() {
                     <p className="text-indigo-100 text-sm mt-2 leading-relaxed">Partagez ce lien avec vos vendeurs pour qu'ils installent l'application sur leur téléphone.</p>
                   </div>
                   <div className="p-4 bg-white/10 rounded-2xl border border-white/10 flex items-center justify-between gap-4">
-                    <div className="text-[10px] font-black uppercase tracking-widest truncate">yawo.app/g/{appName.toLowerCase().replace(/\s+/g, '-')}</div>
-                    <Button variant="ghost" size="sm" className="h-8 px-3 rounded-lg bg-white text-indigo-600 font-black text-[10px]">COPIER</Button>
+                    <div className="text-[10px] font-black uppercase tracking-widest truncate">{getAppUrl().replace('https://', '')}</div>
+                    <Button 
+                      onClick={() => {
+                        navigator.clipboard.writeText(getAppUrl());
+                        alert('Lien copié !');
+                      }}
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-8 px-3 rounded-lg bg-white text-indigo-600 font-black text-[10px]"
+                    >
+                      COPIER
+                    </Button>
                   </div>
                   <div className="flex flex-col gap-3">
                     <Button className="w-full bg-white text-indigo-600 hover:bg-indigo-50 font-black rounded-xl h-12">Ouvrir l'App Web</Button>
@@ -991,6 +1029,45 @@ export default function GestionPage() {
               </div>
             </div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Full Screen Mobile Preview */}
+      <AnimatePresence>
+        {showMobilePreview && (
+          <div className="fixed inset-0 z-[200] bg-slate-900 flex flex-col">
+            <div className="bg-slate-800 p-4 flex justify-between items-center border-b border-slate-700">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
+                  <Smartphone size={18} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black text-white uppercase tracking-tight">{appName}</h3>
+                  <p className="text-[10px] text-blue-400 font-black uppercase">Mode Aperçu Interactif</p>
+                </div>
+              </div>
+              <Button 
+                onClick={() => setShowMobilePreview(false)}
+                variant="ghost" 
+                className="text-white hover:bg-white/10 font-bold"
+              >
+                Fermer l'App
+              </Button>
+            </div>
+            <div className="flex-1 overflow-hidden relative bg-gray-100 flex justify-center">
+              <div className="w-full max-w-[500px] h-full bg-white shadow-2xl">
+                <ClientAppDashboard 
+                  appName={appName} 
+                  appLogo={appLogo} 
+                  currency={currency} 
+                  plan={selectedPlan} 
+                  primaryColor={primaryColor}
+                  initialProducts={products} 
+                  isDemo={false} 
+                />
+              </div>
+            </div>
+          </div>
         )}
       </AnimatePresence>
 
@@ -1066,7 +1143,8 @@ export default function GestionPage() {
                 <div className="pt-4 flex gap-3">
                   <Button 
                     onClick={() => {
-                      navigator.clipboard.writeText(`https://yawo.app/g/${appName.toLowerCase().replace(/\s+/g, '-')}`);
+                      navigator.clipboard.writeText(getAppUrl());
+                      alert('Lien copié !');
                     }}
                     variant="outline" 
                     className="flex-1 rounded-xl border-slate-200 font-bold text-slate-600 h-12 text-xs"
