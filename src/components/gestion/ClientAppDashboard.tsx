@@ -6,7 +6,7 @@ import {
   Plus, Download, Bell, ShoppingCart, 
   ArrowUpRight, ArrowDownRight, Search, 
   ChevronRight, MoreVertical, X, CheckCircle2,
-  History, DollarSign, Minus, Store, Globe, WifiOff, RefreshCw, Edit2
+  History, DollarSign, Minus, Store, Globe, WifiOff, RefreshCw, Edit2, Lightbulb, TrendingDown, Info
 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -56,6 +56,7 @@ export default function ClientAppDashboard({
   const [showAddProductModal, setShowAddProductModal] = useState(false);
   const [showNewProductModal, setShowNewProductModal] = useState(false);
   const [showEditProductModal, setShowEditProductModal] = useState(false);
+  const [showInsightsModal, setShowInsightsModal] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
   const [isSyncing, setIsSyncing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -216,6 +217,14 @@ export default function ClientAppDashboard({
               title={isOnline ? "En ligne" : "Hors ligne"}
             >
               {isSyncing ? <RefreshCw size={20} className="animate-spin" /> : isOnline ? <Globe size={20} /> : <WifiOff size={20} />}
+            </button>
+            <button 
+              onClick={() => setShowInsightsModal(true)}
+              className="relative w-10 h-10 bg-yellow-400/20 text-yellow-600 rounded-xl flex items-center justify-center hover:bg-yellow-400/30 transition-all"
+              title="Insights IA"
+            >
+              <Lightbulb size={20} className="fill-yellow-400" />
+              <span className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 border-2 rounded-full animate-ping" style={{ borderColor: primaryColor }}></span>
             </button>
             <button 
               onClick={() => setShowNotifications(!showNotifications)}
@@ -747,6 +756,121 @@ export default function ClientAppDashboard({
                   Ajouter au stock
                 </Button>
               </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Insights Modal */}
+      <AnimatePresence>
+        {showInsightsModal && (
+          <div className="fixed inset-0 z-[120] flex items-end justify-center sm:items-center p-0 sm:p-4">
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setShowInsightsModal(false)}
+              className="absolute inset-0 bg-slate-900/80 backdrop-blur-md"
+            />
+            <motion.div 
+              initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
+              className="relative w-full max-w-md bg-white rounded-t-[40px] sm:rounded-[40px] p-8 shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
+            >
+              <div className="flex justify-between items-center mb-8 shrink-0">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-yellow-100 rounded-2xl flex items-center justify-center text-yellow-600 shadow-inner">
+                    <Lightbulb size={24} className="fill-yellow-400" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight">Conseiller IA</h2>
+                    <p className="text-[10px] text-blue-600 font-black uppercase tracking-[0.2em]">Yawo Insight Engine</p>
+                  </div>
+                </div>
+                <button onClick={() => setShowInsightsModal(false)} className="p-2 bg-slate-50 rounded-xl text-slate-400 hover:bg-slate-100 transition-colors">
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="space-y-6 overflow-y-auto pr-2 no-scrollbar">
+                {/* 1. Analyse de Rentabilité */}
+                <div className="space-y-3">
+                  <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                    <TrendingUp size={14} className="text-green-500" /> Top Rentabilité
+                  </h3>
+                  <div className="space-y-2">
+                    {products
+                      .filter(p => (p.price - (p.cost || 0)) > 0)
+                      .sort((a, b) => (b.price - (b.cost || 0)) - (a.price - (a.cost || 0)))
+                      .slice(0, 2)
+                      .map(p => (
+                        <div key={p.id} className="p-4 bg-green-50 rounded-[24px] border border-green-100">
+                          <p className="text-xs font-bold text-slate-900 mb-1">Tu fais plus d'argent avec : <span className="text-green-600">{p.name}</span></p>
+                          <p className="text-[10px] text-green-700/70 font-medium">Marge nette de {currency}{(p.price - (p.cost || 0)).toFixed(1)} par unité vendue.</p>
+                        </div>
+                      ))}
+                    {products.length === 0 && <p className="text-[10px] text-slate-400 italic">Analyse en cours...</p>}
+                  </div>
+                </div>
+
+                {/* 2. Analyse de Stock */}
+                <div className="space-y-3">
+                  <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                    <Package size={14} className="text-orange-500" /> Alertes Stock
+                  </h3>
+                  <div className="space-y-2">
+                    {/* Surstock */}
+                    {products.filter(p => p.stock > 50).map(p => (
+                      <div key={p.id} className="p-4 bg-orange-50 rounded-[24px] border border-orange-100 flex items-start gap-3">
+                        <AlertTriangle size={18} className="text-orange-600 shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-xs font-bold text-slate-900 mb-1">Tu as trop de stock ici : <span className="text-orange-600">{p.name}</span></p>
+                          <p className="text-[10px] text-orange-700/70 font-medium">{p.stock} unités dorment. Réduis tes prochaines commandes.</p>
+                        </div>
+                      </div>
+                    ))}
+                    
+                    {/* Rupture potentielle */}
+                    {products.filter(p => p.stock > 0 && p.stock <= (p.minStock || 5)).map(p => (
+                      <div key={p.id} className="p-4 bg-blue-50 rounded-[24px] border border-blue-100 flex items-start gap-3">
+                        <Info size={18} className="text-blue-600 shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-xs font-bold text-slate-900 mb-1">Attention au stock : <span className="text-blue-600">{p.name}</span></p>
+                          <p className="text-[10px] text-blue-700/70 font-medium">Plus que {p.stock} unités. Réapprovisionne vite !</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 3. Analyse de Performance (Produits qui ne se vendent pas) */}
+                <div className="space-y-3">
+                  <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                    <TrendingDown size={14} className="text-red-500" /> Analyse Performance
+                  </h3>
+                  <div className="space-y-2">
+                    {products
+                      .filter(p => !sales.some(s => s.productId === p.id))
+                      .slice(0, 2)
+                      .map(p => (
+                        <div key={p.id} className="p-4 bg-red-50 rounded-[24px] border border-red-100">
+                          <p className="text-xs font-bold text-slate-900 mb-1">Le produit ne se vend pas : <span className="text-red-600">{p.name}</span></p>
+                          <p className="text-[10px] text-red-700/70 font-medium">Aucune vente enregistrée. Envisage une promotion ou change l'emplacement.</p>
+                        </div>
+                      ))}
+                    {products.length > 0 && products.every(p => sales.some(s => s.productId === p.id)) && (
+                      <div className="p-4 bg-slate-50 rounded-[24px] border border-slate-100 text-center">
+                        <CheckCircle2 size={24} className="text-green-500 mx-auto mb-2" />
+                        <p className="text-[10px] font-black text-slate-600 uppercase">Tous tes produits tournent bien !</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <Button 
+                onClick={() => setShowInsightsModal(false)}
+                className="w-full h-14 bg-slate-900 hover:bg-black text-white font-black text-sm rounded-2xl shadow-xl mt-8 shrink-0 border-none"
+              >
+                Compris, merci !
+              </Button>
             </motion.div>
           </div>
         )}
