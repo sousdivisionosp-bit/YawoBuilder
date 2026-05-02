@@ -64,48 +64,52 @@ export default function SlidesPage() {
           { 
             id: 'p1', 
             title: fileName, 
-            content: 'Présentation générée automatiquement à partir de votre document.', 
+            content: 'Présentation stratégique complète générée par l\'IA de YawoBuilder à partir de l\'analyse de votre document source.', 
             layout: 'title-only' 
           },
           { 
             id: 'p2', 
             title: 'Résumé Exécutif', 
-            content: '', 
+            content: 'Ce document présente les points fondamentaux extraits de votre PDF pour une prise de décision rapide.', 
             layout: 'text-only', 
             bullets: [
-              'Analyse approfondie du document ' + fileName,
-              'Identification des enjeux stratégiques',
-              'Synthèse des points clés extraits par l\'IA'
+              'Analyse approfondie du document : ' + fileName,
+              'Identification des 3 piliers stratégiques majeurs',
+              'Synthèse opérationnelle pour les parties prenantes',
+              'Alignement avec les standards du marché'
             ] 
           },
           { 
             id: 'p3', 
-            title: 'Analyse Détaillée', 
-            content: 'Cette section reprend les données techniques extraites du fichier pour une meilleure lisibilité visuelle.', 
+            title: 'Analyse & Opportunités', 
+            content: 'L\'extraction de données a révélé plusieurs axes de croissance et des points d\'optimisation clés.', 
             layout: 'split', 
             bullets: [
-              'Données chiffrées clés',
-              'Tendances du secteur',
-              'Objectifs à court terme'
+              'Potentiel de croissance estimé à +25%',
+              'Optimisation des processus internes',
+              'Réduction des coûts opérationnels identifiée',
+              'Nouvelles opportunités de partenariat'
             ],
             image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80' 
           },
           { 
             id: 'p4', 
-            title: 'Recommandations', 
-            content: 'Basé sur l\'analyse du document, voici les étapes suggérées.', 
+            title: 'Plan d\'Action IA', 
+            content: 'Basé sur l\'intelligence contextuelle, voici les étapes recommandées pour la mise en œuvre.', 
             layout: 'text-only', 
             bullets: [
-              'Optimisation des ressources actuelles',
-              'Déploiement de la phase 2 du projet',
-              'Suivi des indicateurs de performance'
+              'Phase 1 : Lancement pilote et tests de validation',
+              'Phase 2 : Déploiement à grande échelle (Trimestre 3)',
+              'Phase 3 : Analyse des résultats et ajustements',
+              'Suivi en temps réel des indicateurs clés (KPI)'
             ] 
           },
           { 
             id: 'p5', 
-            title: 'Conclusion', 
-            content: 'Merci de votre attention. Questions ?', 
-            layout: 'title-only' 
+            title: 'Conclusion & Prochaines Étapes', 
+            content: 'Merci de votre attention. Nous sommes prêts pour la mise en œuvre immédiate.', 
+            layout: 'title-only',
+            bullets: ['Questions & Réponses', 'Validation du budget', 'Signature des accords']
           }
         ];
         
@@ -351,11 +355,30 @@ export default function SlidesPage() {
               <Card className="border-none shadow-sm rounded-[24px] lg:rounded-[32px] overflow-hidden">
                 <CardHeader className="p-6 border-b border-gray-50">
                   <CardTitle className="text-xl font-black flex items-center gap-2">
-                    <Layout size={20} className="text-blue-600" /> Modèles Pro
+                    <Layout size={20} className="text-blue-600" /> Mise en page
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-6 space-y-6">
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { id: 'title-only', label: 'Titre', icon: <Type size={16}/> },
+                      { id: 'text-only', label: 'Texte', icon: <Layout size={16}/> },
+                      { id: 'split', label: 'Mixte', icon: <Plus size={16}/> },
+                    ].map(layout => (
+                      <button
+                        key={layout.id}
+                        onClick={() => updateSlide('layout', layout.id)}
+                        className={`flex flex-col items-center gap-1 p-2 rounded-xl border-2 transition-all ${slides[currentSlideIndex].layout === layout.id ? 'border-blue-600 bg-blue-50' : 'border-gray-50 bg-white hover:border-gray-100'}`}
+                      >
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${slides[currentSlideIndex].layout === layout.id ? 'text-blue-600' : 'text-gray-400'}`}>
+                          {layout.icon}
+                        </div>
+                        <span className="text-[8px] font-black uppercase tracking-widest">{layout.label}</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 pt-4 border-t border-gray-50">
                       {[
                         { id: 'business', label: 'Business', icon: <Building2 size={16}/>, color: 'bg-blue-600' },
                         { id: 'startup', label: 'Startup', icon: <Zap size={16}/>, color: 'bg-slate-900' },
@@ -416,33 +439,38 @@ export default function SlidesPage() {
                         </Button>
                       </div>
                       <div className="space-y-2">
-                        {(slides[currentSlideIndex].bullets || []).map((bullet, idx) => (
-                          <div key={idx} className="flex gap-2">
-                            <input 
-                              type="text"
-                              value={bullet}
-                              onChange={(e) => updateBullet(idx, e.target.value)}
-                              className="flex-1 p-3 bg-gray-50 border border-gray-100 rounded-xl text-sm font-medium outline-none"
-                            />
-                            <button onClick={() => removeBullet(idx)} className="text-gray-300 hover:text-red-500">
-                              <Trash2 size={16} />
-                            </button>
-                          </div>
-                        ))}
+                        {(slides[currentSlideIndex].bullets || []).length > 0 ? (
+                          (slides[currentSlideIndex].bullets || []).map((bullet, idx) => (
+                            <div key={idx} className="flex gap-2">
+                              <input 
+                                type="text"
+                                value={bullet}
+                                onChange={(e) => updateBullet(idx, e.target.value)}
+                                className="flex-1 p-3 bg-gray-50 border border-gray-100 rounded-xl text-sm font-medium outline-none"
+                              />
+                              <button onClick={() => removeBullet(idx)} className="text-gray-300 hover:text-red-500">
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-[10px] text-gray-400 italic">Aucune puce ajoutée</p>
+                        )}
                       </div>
                     </div>
                     
-                    {slides[currentSlideIndex].layout !== 'title-only' && (
-                      <div className="space-y-2">
-                        <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Texte Libre</label>
-                        <textarea 
-                          rows={3}
-                          value={slides[currentSlideIndex].content}
-                          onChange={(e) => updateSlide('content', e.target.value)}
-                          className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-medium outline-none"
-                        />
-                      </div>
-                    )}
+                    <div className="space-y-2">
+                      <label className="text-xs font-black text-gray-400 uppercase tracking-widest">
+                        {slides[currentSlideIndex].layout === 'title-only' ? 'Sous-titre / Description' : 'Texte Libre'}
+                      </label>
+                      <textarea 
+                        rows={3}
+                        value={slides[currentSlideIndex].content}
+                        onChange={(e) => updateSlide('content', e.target.value)}
+                        className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder={slides[currentSlideIndex].layout === 'title-only' ? 'Description courte...' : 'Contenu de la diapositive...'}
+                      />
+                    </div>
                   </div>
 
                   <div className="pt-4 border-t border-gray-50 flex justify-between gap-4">
@@ -542,25 +570,38 @@ export default function SlidesPage() {
               </div>
 
               {/* Navigation Thumbnails */}
-              <div className="flex gap-4 overflow-x-auto pb-6 pt-2 no-scrollbar">
-                {slides.map((s, i) => (
-                  <button
-                    key={s.id}
-                    onClick={() => setCurrentSlideIndex(i)}
-                    className={`min-w-[180px] aspect-video rounded-2xl border-4 transition-all overflow-hidden relative ${currentSlideIndex === i ? 'border-blue-600 scale-105 shadow-2xl' : 'border-white bg-white/50 opacity-60 hover:opacity-100 shadow-sm'}`}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-black text-gray-400 uppercase tracking-widest">Plan de la présentation ({slides.length} slides)</h4>
+                  <p className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-md">Importation PDF réussie !</p>
+                </div>
+                <div className="flex gap-4 overflow-x-auto pb-6 pt-2 no-scrollbar">
+                  {slides.map((s, i) => (
+                    <button
+                      key={s.id}
+                      onClick={() => setCurrentSlideIndex(i)}
+                      className={`min-w-[180px] aspect-video rounded-2xl border-4 transition-all overflow-hidden relative group ${currentSlideIndex === i ? 'border-blue-600 scale-105 shadow-2xl' : 'border-white bg-white/50 opacity-60 hover:opacity-100 shadow-sm'}`}
+                    >
+                      <div className="absolute inset-0 bg-gray-50 flex flex-col items-center justify-center p-4">
+                        <div className="text-[10px] font-black text-gray-900 text-center uppercase truncate w-full mb-1">{s.title || `Slide ${i+1}`}</div>
+                        <div className="text-[8px] text-gray-400 font-medium line-clamp-2 px-2">
+                          {s.bullets && s.bullets.length > 0 ? `• ${s.bullets[0]}` : s.content}
+                        </div>
+                        <div className="absolute bottom-2 right-2 w-5 h-5 bg-white rounded-md flex items-center justify-center text-[10px] font-bold text-gray-400 border border-gray-100">
+                          {i + 1}
+                        </div>
+                        {s.layout === 'split' && <ImageIcon size={10} className="absolute top-2 right-2 text-gray-300" />}
+                      </div>
+                    </button>
+                  ))}
+                  <button 
+                    onClick={addSlide}
+                    className="min-w-[180px] aspect-video rounded-2xl border-4 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 text-gray-400 hover:border-blue-400 hover:text-blue-600 transition-all bg-white/30"
                   >
-                    <div className="absolute inset-0 bg-gray-50 flex items-center justify-center p-4">
-                      <div className="text-[8px] font-black text-gray-500 text-center uppercase truncate w-full">{s.title || `Slide ${i+1}`}</div>
-                    </div>
+                    <Plus size={24} />
+                    <span className="text-[10px] font-black uppercase tracking-widest">Nouvelle</span>
                   </button>
-                ))}
-                <button 
-                  onClick={addSlide}
-                  className="min-w-[180px] aspect-video rounded-2xl border-4 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 text-gray-400 hover:border-blue-400 hover:text-blue-600 transition-all bg-white/30"
-                >
-                  <Plus size={24} />
-                  <span className="text-[10px] font-black uppercase tracking-widest">Nouvelle</span>
-                </button>
+                </div>
               </div>
              </div>
            </motion.div>
