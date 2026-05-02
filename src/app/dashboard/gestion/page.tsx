@@ -49,18 +49,41 @@ export default function GestionPage() {
   const [showInstallModal, setShowInstallModal] = useState(false);
   const [showMobilePreview, setShowMobilePreview] = useState(false);
   const [baseUrl, setBaseUrl] = useState('');
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setBaseUrl(window.location.origin);
       
-      // Détecter si on arrive via le lien d'installation mobile
+      const handleBeforeInstallPrompt = (e: any) => {
+        e.preventDefault();
+        setDeferredPrompt(e);
+      };
+
+      window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      
       const params = new URLSearchParams(window.location.search);
       if (params.get('app')) {
         setIsMobileVendeur(true);
       }
+
+      return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     }
   }, []);
+
+  const handleNativeInstall = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+        setShowInstallModal(false);
+      }
+    } else {
+      // Si le prompt natif n'est pas dispo (ex: iPhone), on montre le guide
+      setShowInstallModal(true);
+    }
+  };
 
   const getAppUrl = () => {
     const slug = appName.toLowerCase().replace(/\s+/g, '-');
@@ -867,30 +890,18 @@ export default function GestionPage() {
                     Scannez ce QR Code avec votre téléphone pour ouvrir votre application de gestion personnalisée et l'ajouter à votre écran d'accueil.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3">
-                    <div className="flex-1 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 px-4 py-3 flex items-center justify-between gap-4">
-                      <span className="text-[10px] font-black uppercase tracking-widest truncate">{getAppUrl().replace('https://', '')}</span>
-                      <button 
-                        onClick={() => {
-                          navigator.clipboard.writeText(getAppUrl());
-                          alert('Lien copié !');
-                        }}
-                        className="p-2 hover:bg-white/20 rounded-lg transition-colors"
-                      >
-                        <Copy size={16} />
-                      </button>
-                    </div>
                     <Button 
-                      onClick={() => setShowMobilePreview(true)}
+                      onClick={handleNativeInstall}
                       className="bg-white text-blue-600 hover:bg-blue-50 font-black rounded-xl h-12 px-8 shadow-lg flex items-center gap-2"
                     >
-                      <Smartphone size={18} /> Tester
+                      <Download size={18} /> Installer sur mon mobile
                     </Button>
                     <Button 
                       variant="ghost"
-                      onClick={() => setShowInstallModal(true)}
-                      className="text-white/80 hover:text-white hover:bg-white/10 font-bold rounded-xl h-12 px-6"
+                      onClick={() => setShowMobilePreview(true)}
+                      className="text-white/80 hover:text-white hover:bg-white/10 font-bold rounded-xl h-12 px-6 flex items-center gap-2"
                     >
-                      QR Code
+                      <Smartphone size={18} /> Tester l'aperçu
                     </Button>
                   </div>
                 </div>
