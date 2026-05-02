@@ -107,6 +107,7 @@ export default function DashboardLayout({
             <Package size={22} />
             <span className="font-bold">Mon App de Gestion</span>
           </Link>
+          {/* Service Présentation Projet Désactivé 
           <Link 
             href="/dashboard/slides" 
             onClick={() => setIsSidebarOpen(false)}
@@ -115,6 +116,7 @@ export default function DashboardLayout({
             <Presentation size={22} />
             <span className="font-bold">Présentation Projet</span>
           </Link>
+          */}
           <Link 
             href="/dashboard/billing" 
             onClick={() => setIsSidebarOpen(false)}
