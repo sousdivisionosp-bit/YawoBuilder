@@ -9,7 +9,7 @@ import {
   Layout, ShieldCheck, Download, RefreshCw, WifiOff, CreditCard, Plus, Trash2, Save,
   PlayCircle, Bell, Info, Check, Laptop, Image as ImageIcon, Upload,
   Settings as SettingsIcon, Database, Share2, Star, Shield, Building2, Store, Lightbulb,
-  QrCode, Copy
+  QrCode, Copy, X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ClientAppDashboard from '@/components/gestion/ClientAppDashboard';
@@ -45,6 +45,7 @@ export default function GestionPage() {
   ]);
   const [appStats, setAppStats] = useState({ revenue: 0, profit: 0, transactions: 0 });
   const [recentSales, setRecentSales] = useState<any[]>([]);
+  const [showInstallModal, setShowInstallModal] = useState(false);
 
   useEffect(() => {
     const currentUser = localStorage.getItem('yawo_user_name') || 'DemoUser';
@@ -833,7 +834,12 @@ export default function GestionPage() {
                       <span className="text-[10px] font-black uppercase tracking-widest truncate">yawo.app/g/{appName.toLowerCase().replace(/\s+/g, '-')}</span>
                       <button className="p-2 hover:bg-white/20 rounded-lg transition-colors"><Copy size={16} /></button>
                     </div>
-                    <Button className="bg-white text-blue-600 hover:bg-blue-50 font-black rounded-xl h-12 px-8">Installer sur mon mobile</Button>
+                    <Button 
+                      onClick={() => setShowInstallModal(true)}
+                      className="bg-white text-blue-600 hover:bg-blue-50 font-black rounded-xl h-12 px-8"
+                    >
+                      Installer sur mon mobile
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -985,6 +991,95 @@ export default function GestionPage() {
               </div>
             </div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Installation Instructions Modal */}
+      <AnimatePresence>
+        {showInstallModal && (
+          <div className="fixed inset-0 z-[150] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setShowInstallModal(false)}
+              className="absolute inset-0 bg-slate-900/90 backdrop-blur-xl"
+            />
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative w-full max-w-2xl bg-white rounded-[40px] shadow-2xl overflow-hidden flex flex-col md:flex-row"
+            >
+              {/* Left Side: QR Code */}
+              <div className="bg-slate-50 p-10 flex flex-col items-center justify-center border-r border-slate-100 md:w-5/12">
+                <div className="bg-white p-6 rounded-[32px] shadow-2xl mb-6 ring-1 ring-slate-100">
+                  <QrCode size={180} className="text-slate-900" />
+                </div>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Scannez pour ouvrir</p>
+                <div className="mt-8 flex flex-col gap-2 w-full">
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl h-12 text-xs">
+                    <Smartphone size={16} className="mr-2" /> Ouvrir sur ce PC
+                  </Button>
+                </div>
+              </div>
+
+              {/* Right Side: Instructions */}
+              <div className="p-10 flex-1 space-y-8">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h2 className="text-2xl font-black text-slate-900 leading-tight">Installation Mobile</h2>
+                    <p className="text-sm text-slate-500 font-medium">Suivez ces étapes pour installer <span className="text-blue-600 font-bold">{appName}</span></p>
+                  </div>
+                  <button onClick={() => setShowInstallModal(false)} className="p-2 bg-slate-100 rounded-xl text-slate-400 hover:text-slate-600">
+                    <X size={20} />
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="flex gap-4">
+                    <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-sm shrink-0">1</div>
+                    <div className="space-y-1">
+                      <p className="text-sm font-black text-slate-900">Ouvrez le lien sur votre mobile</p>
+                      <p className="text-xs text-slate-500 leading-relaxed">Utilisez Chrome (Android) ou Safari (iPhone) pour scanner le QR code ou copier le lien.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4">
+                    <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-sm shrink-0">2</div>
+                    <div className="space-y-1">
+                      <p className="text-sm font-black text-slate-900">Ajouter à l'écran d'accueil</p>
+                      <p className="text-xs text-slate-500 leading-relaxed">
+                        Sur <span className="font-bold">Android</span>: Cliquez sur les 3 points (⋮) et "Installer l'application".<br/>
+                        Sur <span className="font-bold">iPhone</span>: Cliquez sur l'icône Partager (↑) et "Sur l'écran d'accueil".
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4">
+                    <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-sm shrink-0">3</div>
+                    <div className="space-y-1">
+                      <p className="text-sm font-black text-slate-900">Lancez votre boutique !</p>
+                      <p className="text-xs text-slate-500 leading-relaxed">L'icône apparaîtra sur votre téléphone comme une application native. Vos ventes se synchroniseront ici.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 flex gap-3">
+                  <Button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(`https://yawo.app/g/${appName.toLowerCase().replace(/\s+/g, '-')}`);
+                    }}
+                    variant="outline" 
+                    className="flex-1 rounded-xl border-slate-200 font-bold text-slate-600 h-12 text-xs"
+                  >
+                    <Copy size={16} className="mr-2" /> Copier le lien
+                  </Button>
+                  <Button onClick={() => setShowInstallModal(false)} className="flex-1 bg-slate-900 hover:bg-black text-white font-black rounded-xl h-12 text-xs">
+                    C'est compris !
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>
