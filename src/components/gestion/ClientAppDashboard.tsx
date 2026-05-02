@@ -66,6 +66,7 @@ export default function ClientAppDashboard({
   const [newProduct, setNewProduct] = useState({
     name: '',
     price: '',
+    purchasePrice: '',
     stock: '',
     minStock: '5'
   });
@@ -148,7 +149,7 @@ export default function ClientAppDashboard({
   };
 
   const handleAddNewProduct = () => {
-    if (!newProduct.name || !newProduct.price) return;
+    if (!newProduct.name || !newProduct.price || !newProduct.purchasePrice) return;
 
     const p: Product = {
       id: Math.random().toString(36).substr(2, 9),
@@ -156,12 +157,12 @@ export default function ClientAppDashboard({
       price: parseFloat(newProduct.price) || 0,
       stock: parseInt(newProduct.stock) || 0,
       minStock: parseInt(newProduct.minStock) || 5,
-      cost: (parseFloat(newProduct.price) || 0) * 0.6
+      cost: parseFloat(newProduct.purchasePrice) || 0
     };
 
     setProducts([...products, p]);
     setShowNewProductModal(false);
-    setNewProduct({ name: '', price: '', stock: '', minStock: '5' });
+    setNewProduct({ name: '', price: '', purchasePrice: '', stock: '', minStock: '5' });
   };
 
   useEffect(() => {
@@ -386,7 +387,7 @@ export default function ClientAppDashboard({
                     <span className="font-black">{currency}{salesToday.toFixed(1)}</span>
                   </div>
                   <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-blue-600 w-2/3"></div>
+                    <div className="h-full bg-blue-600 w-full" style={{ width: `${Math.min(100, (salesToday / 500) * 100)}%` }}></div>
                   </div>
 
                   <div className="flex items-center justify-between text-sm">
@@ -394,29 +395,54 @@ export default function ClientAppDashboard({
                     <span className="font-black text-green-600">{currency}{profitToday.toFixed(1)}</span>
                   </div>
                   <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-green-500 w-1/3"></div>
+                    <div className="h-full bg-green-500 w-full" style={{ width: `${Math.min(100, (profitToday / (salesToday || 1)) * 100)}%` }}></div>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-50">
                   <div className="text-center">
-                    <div className="text-[9px] font-black text-gray-400 uppercase">Transactions</div>
-                    <div className="text-lg font-black text-gray-900">{sales.length}</div>
+                    <div className="text-[9px] font-black text-gray-400 uppercase">Marge Moyenne</div>
+                    <div className="text-lg font-black text-blue-600">
+                      {salesToday > 0 ? ((profitToday / salesToday) * 100).toFixed(0) : 0}%
+                    </div>
                   </div>
                   <div className="text-center">
-                    <div className="text-[9px] font-black text-gray-400 uppercase">Panier Moyen</div>
-                    <div className="text-lg font-black text-gray-900">
-                      {currency}{sales.length > 0 ? (salesToday / sales.length).toFixed(1) : '0'}
-                    </div>
+                    <div className="text-[9px] font-black text-gray-400 uppercase">Transactions</div>
+                    <div className="text-lg font-black text-gray-900">{sales.length}</div>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <div className="grid grid-cols-3 gap-2">
-              <button className="py-3 bg-blue-600 rounded-xl text-[10px] font-black text-white shadow-lg shadow-blue-100">JOUR</button>
-              <button className="py-3 bg-white border border-gray-100 rounded-xl text-[10px] font-black text-gray-400">SEMAINE</button>
-              <button className="py-3 bg-white border border-gray-100 rounded-xl text-[10px] font-black text-gray-400">MOIS</button>
+            {/* Marges par produit */}
+            <div className="space-y-3">
+              <h3 className="font-black text-gray-900 uppercase text-[10px] tracking-widest">Marge par produit vendu</h3>
+              <div className="space-y-2">
+                {Array.from(new Set(sales.map(s => s.productId))).map(pid => {
+                  const productSales = sales.filter(s => s.productId === pid);
+                  const totalProdProfit = productSales.reduce((acc, s) => acc + s.profit, 0);
+                  const totalProdRevenue = productSales.reduce((acc, s) => acc + s.totalPrice, 0);
+                  const name = productSales[0].productName;
+                  const marginPercent = totalProdRevenue > 0 ? (totalProdProfit / totalProdRevenue) * 100 : 0;
+
+                  return (
+                    <div key={pid} className="bg-white p-3 rounded-xl border border-gray-100 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black ${marginPercent < 0 ? 'bg-red-50 text-red-500' : 'bg-green-50 text-green-600'}`}>
+                          {marginPercent.toFixed(0)}%
+                        </div>
+                        <span className="text-xs font-bold text-gray-700">{name}</span>
+                      </div>
+                      <span className={`text-xs font-black ${totalProdProfit < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                        {totalProdProfit < 0 ? '-' : '+'}{currency}{Math.abs(totalProdProfit).toFixed(1)}
+                      </span>
+                    </div>
+                  );
+                })}
+                {sales.length === 0 && (
+                  <p className="text-[10px] text-gray-400 italic text-center py-4">Effectuez des ventes pour voir l'analyse des marges</p>
+                )}
+              </div>
             </div>
           </motion.div>
         )}
@@ -515,11 +541,20 @@ export default function ClientAppDashboard({
                 </div>
 
                 {selectedProductForSale && (
-                  <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex justify-between items-center">
-                    <span className="text-sm font-bold text-blue-900">Total à payer</span>
-                    <span className="text-xl font-black text-blue-600">
-                      {currency}{(products.find(p => p.id === selectedProductForSale)?.price || 0) * saleQuantity}
-                    </span>
+                  <div className="space-y-3">
+                    <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex justify-between items-center">
+                      <span className="text-sm font-bold text-blue-900">Total à payer</span>
+                      <span className="text-xl font-black text-blue-600">
+                        {currency}{(products.find(p => p.id === selectedProductForSale)?.price || 0) * saleQuantity}
+                      </span>
+                    </div>
+
+                    {products.find(p => p.id === selectedProductForSale) && (products.find(p => p.id === selectedProductForSale)?.price || 0) < (products.find(p => p.id === selectedProductForSale)?.cost || 0) && (
+                      <div className="p-3 bg-red-50 rounded-xl border border-red-100 flex items-center gap-3 text-red-600 animate-pulse">
+                        <AlertTriangle size={18} />
+                        <span className="text-[10px] font-black uppercase">Attention : Vente à perte détectée !</span>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -571,15 +606,28 @@ export default function ClientAppDashboard({
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Prix d'Achat ({currency})</label>
+                    <input 
+                      type="number" 
+                      value={newProduct.purchasePrice}
+                      onChange={(e) => setNewProduct({...newProduct, purchasePrice: e.target.value})}
+                      className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Prix d'achat"
+                    />
+                  </div>
+                  <div className="space-y-1">
                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Prix Vente ({currency})</label>
                     <input 
                       type="number" 
                       value={newProduct.price}
                       onChange={(e) => setNewProduct({...newProduct, price: e.target.value})}
                       className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="0.00"
+                      placeholder="Prix de vente"
                     />
                   </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Stock Initial</label>
                     <input 
@@ -590,16 +638,15 @@ export default function ClientAppDashboard({
                       placeholder="0"
                     />
                   </div>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Seuil d'alerte (Stock critique)</label>
-                  <input 
-                    type="number" 
-                    value={newProduct.minStock}
-                    onChange={(e) => setNewProduct({...newProduct, minStock: e.target.value})}
-                    className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Seuil d'alerte</label>
+                    <input 
+                      type="number" 
+                      value={newProduct.minStock}
+                      onChange={(e) => setNewProduct({...newProduct, minStock: e.target.value})}
+                      className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
                 </div>
 
                 <Button 
