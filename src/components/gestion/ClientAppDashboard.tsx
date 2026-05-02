@@ -6,7 +6,7 @@ import {
   Plus, Download, Bell, ShoppingCart, 
   ArrowUpRight, ArrowDownRight, Search, 
   ChevronRight, MoreVertical, X, CheckCircle2,
-  History, DollarSign, Minus, Store, Globe, WifiOff, RefreshCw
+  History, DollarSign, Minus, Store, Globe, WifiOff, RefreshCw, Edit2
 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -55,6 +55,7 @@ export default function ClientAppDashboard({
   const [showSaleModal, setShowSaleModal] = useState(false);
   const [showAddProductModal, setShowAddProductModal] = useState(false);
   const [showNewProductModal, setShowNewProductModal] = useState(false);
+  const [showEditProductModal, setShowEditProductModal] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
   const [isSyncing, setIsSyncing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -73,6 +74,7 @@ export default function ClientAppDashboard({
   const [products, setProducts] = useState<Product[]>([]);
   const [sales, setSales] = useState<Sale[]>([]);
   const [selectedProductForSale, setSelectedProductForSale] = useState<string>('');
+  const [selectedProductForEdit, setSelectedProductForEdit] = useState<Product | null>(null);
   const [saleQuantity, setSaleQuantity] = useState(1);
 
   // Initialize data from props
@@ -163,6 +165,16 @@ export default function ClientAppDashboard({
     setProducts([...products, p]);
     setShowNewProductModal(false);
     setNewProduct({ name: '', price: '', purchasePrice: '', stock: '', minStock: '5' });
+  };
+
+  const handleUpdateProduct = () => {
+    if (!selectedProductForEdit) return;
+
+    setProducts(products.map(p => 
+      p.id === selectedProductForEdit.id ? selectedProductForEdit : p
+    ));
+    setShowEditProductModal(false);
+    setSelectedProductForEdit(null);
   };
 
   useEffect(() => {
@@ -352,9 +364,18 @@ export default function ClientAppDashboard({
                     <div>
                       <h4 className="font-bold text-sm text-gray-900">{product.name}</h4>
                       <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">{currency}{product.price} / unité</p>
+                      <p className="text-[8px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">Achat: {currency}{product.cost || 0}</p>
                     </div>
                   </div>
-                  <button className="p-2 bg-gray-50 rounded-xl text-gray-400"><MoreVertical size={18}/></button>
+                  <button 
+                    onClick={() => {
+                      setSelectedProductForEdit(product);
+                      setShowEditProductModal(true);
+                    }}
+                    className="p-2 bg-gray-50 rounded-xl text-blue-600 hover:bg-blue-50 transition-colors"
+                  >
+                    <Edit2 size={18}/>
+                  </button>
                 </div>
               ))}
               
@@ -724,6 +745,96 @@ export default function ClientAppDashboard({
                   className="w-full h-16 bg-green-600 hover:bg-green-700 text-white font-black text-lg rounded-2xl shadow-xl shadow-green-100 mt-4 border-none"
                 >
                   Ajouter au stock
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Edit Product Modal */}
+      <AnimatePresence>
+        {showEditProductModal && selectedProductForEdit && (
+          <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center p-0 sm:p-4">
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setShowEditProductModal(false)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
+              className="relative w-full max-w-md bg-white rounded-t-[32px] sm:rounded-[32px] p-8 shadow-2xl overflow-hidden"
+            >
+              <div className="flex justify-between items-center mb-8">
+                <div>
+                  <h2 className="text-xl font-black text-gray-900 uppercase tracking-tight">Modifier Produit</h2>
+                  <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{selectedProductForEdit.name}</p>
+                </div>
+                <button onClick={() => setShowEditProductModal(false)} className="p-2 bg-gray-50 rounded-xl text-gray-400">
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Prix d'Achat ({currency})</label>
+                    <input 
+                      type="number" 
+                      value={selectedProductForEdit.cost}
+                      onChange={(e) => setSelectedProductForEdit({...selectedProductForEdit, cost: parseFloat(e.target.value) || 0})}
+                      className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Prix Vente ({currency})</label>
+                    <input 
+                      type="number" 
+                      value={selectedProductForEdit.price}
+                      onChange={(e) => setSelectedProductForEdit({...selectedProductForEdit, price: parseFloat(e.target.value) || 0})}
+                      className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Stock Actuel</label>
+                    <input 
+                      type="number" 
+                      value={selectedProductForEdit.stock}
+                      onChange={(e) => setSelectedProductForEdit({...selectedProductForEdit, stock: parseInt(e.target.value) || 0})}
+                      className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Seuil Alerte</label>
+                    <input 
+                      type="number" 
+                      value={selectedProductForEdit.minStock}
+                      onChange={(e) => setSelectedProductForEdit({...selectedProductForEdit, minStock: parseInt(e.target.value) || 0})}
+                      className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Marge estimée</span>
+                    <span className={`text-xs font-black ${selectedProductForEdit.price - (selectedProductForEdit.cost || 0) < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                      {((selectedProductForEdit.price - (selectedProductForEdit.cost || 0)) / (selectedProductForEdit.price || 1) * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                  <div className="text-lg font-black text-blue-900">
+                    {currency}{(selectedProductForEdit.price - (selectedProductForEdit.cost || 0)).toFixed(1)} <span className="text-xs font-bold text-blue-400">/ unité</span>
+                  </div>
+                </div>
+
+                <Button 
+                  onClick={handleUpdateProduct}
+                  className="w-full h-16 bg-blue-600 hover:bg-blue-700 text-white font-black text-lg rounded-2xl shadow-xl shadow-blue-100 mt-4 border-none"
+                >
+                  Mettre à jour
                 </Button>
               </div>
             </motion.div>
