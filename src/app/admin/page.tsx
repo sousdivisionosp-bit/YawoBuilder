@@ -31,24 +31,42 @@ export default function AdminDashboard() {
     const storedSites = JSON.parse(localStorage.getItem('yawo_sites') || '[]');
     const storedUser = localStorage.getItem('yawo_user_name') || 'Admin';
     
-    // Calcul des statistiques réelles
-    const totalProjects = storedSites.length;
-    const paidProjects = storedSites.filter((s: any) => s.isPaid).length;
-    const revenue = paidProjects * 25; // Supposons 25$ par projet payé
+    // Récupération des données de "Mon App de Gestion" (Business Apps)
+    let totalBusinessRevenue = 0;
+    let totalBusinessProfit = 0;
+    let businessAppsCount = 0;
+    let totalBusinessSalesCount = 0;
+
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('yawo_gestion_data_')) {
+        const appData = JSON.parse(localStorage.getItem(key) || '{}');
+        const appSales = appData.sales || [];
+        totalBusinessRevenue += appSales.reduce((acc: number, s: any) => acc + s.totalPrice, 0);
+        totalBusinessProfit += appSales.reduce((acc: number, s: any) => acc + s.profit, 0);
+        totalBusinessSalesCount += appSales.length;
+        businessAppsCount++;
+      }
+    });
+
+    // Calcul des statistiques réelles (Sites + Business Apps)
+    const totalProjects = storedSites.length + businessAppsCount;
+    const paidProjects = storedSites.filter((s: any) => s.isPaid).length + (businessAppsCount > 0 ? 1 : 0); // Simulation
+    const siteRevenue = paidProjects * 25; 
+    const totalRevenue = siteRevenue + totalBusinessRevenue;
     const conversionRate = totalProjects > 0 ? Math.round((paidProjects / totalProjects) * 100) : 0;
 
     setStats([
-      { label: 'Utilisateurs Totaux', value: '1', icon: Users, change: '+100%', positive: true }, // 1 utilisateur réel détecté
+      { label: 'Utilisateurs Totaux', value: '1', icon: Users, change: '+100%', positive: true },
       { label: 'Projets Créés', value: totalProjects.toString(), icon: Package, change: totalProjects > 0 ? '+100%' : '0%', positive: true },
-      { label: 'Revenu Mensuel', value: `${revenue}$`, icon: CreditCard, change: revenue > 0 ? '+100%' : '0%', positive: true },
-      { label: 'Taux de Conversion', value: `${conversionRate}%`, icon: TrendingUp, change: conversionRate > 0 ? '+5%' : '0%', positive: true },
+      { label: 'Revenu Total', value: `${totalRevenue.toFixed(1)}$`, icon: CreditCard, change: totalRevenue > 0 ? '+100%' : '0%', positive: true },
+      { label: 'Profit Business Apps', value: `${totalBusinessProfit.toFixed(1)}$`, icon: TrendingUp, change: totalBusinessProfit > 0 ? '+100%' : '0%', positive: true },
     ]);
 
-    // Distribution réelle (en fonction des types détectés ou simulée par type de projet)
+    // Distribution réelle
     setProjectDistribution([
-      { name: 'Sites Web Vitrines', count: totalProjects, icon: Globe, color: 'bg-blue-500' },
+      { name: 'Sites Web Vitrines', count: storedSites.length, icon: Globe, color: 'bg-blue-500' },
       { name: 'Menus QR Restaurant', count: 0, icon: UtensilsCrossed, color: 'bg-orange-500' },
-      { name: 'Apps de Gestion Stock', count: 0, icon: ShoppingBag, color: 'bg-indigo-500' },
+      { name: 'Apps de Gestion Stock', count: businessAppsCount, icon: ShoppingBag, color: 'bg-indigo-500' },
     ]);
 
     // Activité récente basée sur les projets réels

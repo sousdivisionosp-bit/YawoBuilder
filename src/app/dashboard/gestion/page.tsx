@@ -8,12 +8,12 @@ import {
   Smartphone, Zap, CheckCircle2, ArrowRight, 
   Layout, ShieldCheck, Download, RefreshCw, WifiOff, CreditCard, Plus, Trash2, Save,
   PlayCircle, Bell, Info, Check, Laptop, Image as ImageIcon, Upload,
-  Settings as SettingsIcon, Database, Share2, Star, Shield, Building2
+  Settings as SettingsIcon, Database, Share2, Star, Shield, Building2, Store, Lightbulb
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ClientAppDashboard from '@/components/gestion/ClientAppDashboard';
 
-type FlowStep = 'landing' | 'config' | 'demo' | 'payment' | 'generation' | 'success';
+type FlowStep = 'landing' | 'config' | 'demo' | 'payment' | 'generation' | 'success' | 'manager';
 
 interface Product {
   id: string;
@@ -25,6 +25,7 @@ interface Product {
 
 export default function GestionPage() {
   const [step, setStep] = useState<FlowStep>('landing');
+  const [hasApp, setHasApp] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'mpesa' | 'orange' | 'airtel' | null>(null);
   const [phone, setPhone] = useState('');
   const [loadingProgress, setLoadingProgress] = useState(0);
@@ -34,13 +35,47 @@ export default function GestionPage() {
   const [appLogo, setAppLogo] = useState<string | null>(null);
   const [currency, setCurrency] = useState('$');
   const [selectedPlan, setSelectedPlan] = useState<'basic' | 'pro' | 'business'>('pro');
-  const [primaryColor, setPrimaryColor] = useState('#2563eb'); // Blue-600 par défaut
+  const [primaryColor, setPrimaryColor] = useState('#2563eb');
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [businessType, setBusinessType] = useState('Boutique');
   const [products, setProducts] = useState<Product[]>([
     { id: '1', name: 'Chemise Slim Fit', stock: 15, price: '25', category: 'Vêtements' },
     { id: '2', name: 'Jean Denim Blue', stock: 8, price: '45', category: 'Vêtements' }
   ]);
+  const [appStats, setAppStats] = useState({ revenue: 0, profit: 0, transactions: 0 });
+  const [recentSales, setRecentSales] = useState<any[]>([]);
+
+  useEffect(() => {
+    const currentUser = localStorage.getItem('yawo_user_name') || 'DemoUser';
+    const configKey = `yawo_app_config_${currentUser}`;
+    const dataKey = `yawo_gestion_data_${currentUser}`;
+    
+    const storedConfig = JSON.parse(localStorage.getItem(configKey) || 'null');
+    const storedData = JSON.parse(localStorage.getItem(dataKey) || 'null');
+    
+    if (storedConfig) {
+      setHasApp(true);
+      setAppName(storedConfig.appName);
+      setAppLogo(storedConfig.appLogo);
+      setCurrency(storedConfig.currency);
+      setSelectedPlan(storedConfig.selectedPlan);
+      setPrimaryColor(storedConfig.primaryColor);
+      setBusinessType(storedConfig.businessType);
+      setStep('manager');
+    }
+
+    if (storedData) {
+      const sales = storedData.sales || [];
+      const revenue = sales.reduce((acc: number, s: any) => acc + s.totalPrice, 0);
+      const profit = sales.reduce((acc: number, s: any) => acc + s.profit, 0);
+      setAppStats({
+        revenue,
+        profit,
+        transactions: sales.length
+      });
+      setRecentSales(sales.slice(0, 5));
+    }
+  }, []);
 
   useEffect(() => {
     if (step === 'generation') {
@@ -48,7 +83,13 @@ export default function GestionPage() {
         setLoadingProgress(prev => {
           if (prev >= 100) {
             clearInterval(interval);
-            setTimeout(() => setStep('success'), 800);
+            // Sauvegarder la config finale
+            const currentUser = localStorage.getItem('yawo_user_name') || 'DemoUser';
+            const configKey = `yawo_app_config_${currentUser}`;
+            localStorage.setItem(configKey, JSON.stringify({
+              appName, appLogo, currency, selectedPlan, primaryColor, businessType
+            }));
+            setTimeout(() => setStep('manager'), 800);
             return 100;
           }
           return prev + 2;
@@ -56,7 +97,7 @@ export default function GestionPage() {
       }, 50);
       return () => clearInterval(interval);
     }
-  }, [step]);
+  }, [step, appName, appLogo, currency, selectedPlan, primaryColor, businessType]);
 
   const addProduct = () => {
     const newProduct: Product = {
@@ -542,10 +583,10 @@ export default function GestionPage() {
 
                 <div className="flex flex-col gap-4">
                   <Button 
-                    onClick={() => setStep('payment')}
+                    onClick={() => setStep('generation')}
                     className="w-full h-16 bg-blue-600 hover:bg-blue-700 text-white font-black text-xl rounded-2xl shadow-2xl shadow-blue-200 transition-all hover:scale-[1.02] active:scale-95"
                   >
-                    Tout est correct, passer au paiement
+                    Tout est correct, générer mon App (Gratuit pour test)
                   </Button>
                   <Button 
                     variant="ghost"
@@ -760,6 +801,160 @@ export default function GestionPage() {
               >
                 Accéder à mon interface admin
               </Button>
+            </div>
+          </motion.div>
+        )}
+        {step === 'manager' && (
+          <motion.div
+            key="manager"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-10"
+          >
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg" style={{ backgroundColor: primaryColor }}>
+                  {appLogo ? <img src={appLogo} alt="Logo" className="w-full h-full object-cover rounded-2xl" /> : <Store size={28} />}
+                </div>
+                <div>
+                  <h2 className="text-3xl font-black text-gray-900 tracking-tight">{appName}</h2>
+                  <div className="flex items-center gap-3 mt-1">
+                    <span className="px-3 py-1 bg-green-50 text-green-600 text-[10px] font-black uppercase rounded-full border border-green-100">Actif</span>
+                    <span className="text-gray-400 text-xs font-medium uppercase tracking-widest">Panel Propriétaire</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Button variant="outline" className="rounded-xl border-gray-200 bg-white font-bold text-gray-600 h-12 px-6 flex items-center gap-2">
+                  <SettingsIcon size={18} /> Configurer
+                </Button>
+                <Button 
+                  onClick={() => {
+                    const currentUser = localStorage.getItem('yawo_user_name') || 'DemoUser';
+                    const configKey = `yawo_app_config_${currentUser}`;
+                    localStorage.removeItem(configKey);
+                    setStep('landing');
+                  }}
+                  variant="ghost" 
+                  className="text-red-500 hover:bg-red-50 font-bold h-12 rounded-xl"
+                >
+                  Désactiver l'App
+                </Button>
+              </div>
+            </div>
+
+            <div className="grid lg:grid-cols-12 gap-10">
+              {/* Analytics & Stats */}
+              <div className="lg:col-span-8 space-y-8">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                   <Card className="border-none shadow-sm rounded-3xl overflow-hidden bg-white">
+                    <CardContent className="p-6">
+                      <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Ventes Totales</div>
+                      <div className="text-3xl font-black text-gray-900">{appStats.revenue.toFixed(1)}{currency}</div>
+                      <div className="text-[10px] font-bold text-green-500 mt-2 flex items-center gap-1">
+                        <TrendingUp size={12} /> {appStats.transactions} ventes
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card className="border-none shadow-sm rounded-3xl overflow-hidden bg-white">
+                    <CardContent className="p-6">
+                      <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Profit Net</div>
+                      <div className="text-3xl font-black text-blue-600">{appStats.profit.toFixed(1)}{currency}</div>
+                      <div className="text-[10px] font-bold text-blue-400 mt-2 flex items-center gap-1">
+                        <BarChart3 size={12} /> Marge {appStats.revenue > 0 ? ((appStats.profit / appStats.revenue) * 100).toFixed(0) : 0}%
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card className="border-none shadow-sm rounded-3xl overflow-hidden bg-white">
+                    <CardContent className="p-6">
+                      <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Transactions</div>
+                      <div className="text-3xl font-black text-gray-900">{appStats.transactions}</div>
+                      <div className="text-[10px] font-bold text-gray-400 mt-2">Dernières activités</div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Live Feed Simulator */}
+                <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-white">
+                  <CardHeader className="p-8 pb-4">
+                    <div className="flex justify-between items-center">
+                      <CardTitle className="text-xl font-black text-gray-900 flex items-center gap-3">
+                        Activités de Vente
+                        <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                      </CardTitle>
+                      <button className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Voir historique</button>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-8 pt-2">
+                    <div className="space-y-6">
+                      {recentSales.length > 0 ? (
+                        recentSales.map((sale, i) => (
+                          <div key={sale.id || i} className="flex items-center justify-between border-b border-gray-50 pb-4 last:border-0 last:pb-0">
+                            <div className="flex gap-4">
+                              <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 font-black text-xs">
+                                <ShoppingCart size={18} />
+                              </div>
+                              <div>
+                                <div className="text-sm font-black text-gray-900">{sale.productName}</div>
+                                <div className="text-xs text-gray-500 font-medium">Quantité: {sale.quantity} • Vendu par Mobile</div>
+                                <div className="text-[9px] text-gray-400 font-bold uppercase mt-1">
+                                  {new Date(sale.timestamp).toLocaleTimeString()}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-sm font-black text-green-600">+{sale.totalPrice}{currency}</div>
+                              <div className="text-[9px] font-bold text-blue-500">Marge: {sale.profit.toFixed(1)}{currency}</div>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-center py-10">
+                          <WifiOff className="mx-auto text-gray-200 mb-4" size={40} />
+                          <p className="text-sm font-bold text-gray-400">Aucune vente synchronisée pour le moment.</p>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Sidebar Info */}
+              <div className="lg:col-span-4 space-y-6">
+                <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-indigo-600 text-white p-8 space-y-6">
+                  <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center">
+                    <Share2 size={28} />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-black">Lien d'Installation</h3>
+                    <p className="text-indigo-100 text-sm mt-2 leading-relaxed">Partagez ce lien avec vos vendeurs pour qu'ils installent l'application sur leur téléphone.</p>
+                  </div>
+                  <div className="p-4 bg-white/10 rounded-2xl border border-white/10 flex items-center justify-between gap-4">
+                    <div className="text-[10px] font-black uppercase tracking-widest truncate">yawo.app/g/{appName.toLowerCase().replace(/\s+/g, '-')}</div>
+                    <Button variant="ghost" size="sm" className="h-8 px-3 rounded-lg bg-white text-indigo-600 font-black text-[10px]">COPIER</Button>
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    <Button className="w-full bg-white text-indigo-600 hover:bg-indigo-50 font-black rounded-xl h-12">Ouvrir l'App Web</Button>
+                    <p className="text-[9px] text-center text-indigo-200 font-bold uppercase">QR Code disponible dans les paramètres</p>
+                  </div>
+                </Card>
+
+                <Card className="border-none shadow-sm rounded-[32px] overflow-hidden bg-white p-8 space-y-6">
+                  <h3 className="text-lg font-black text-gray-900">Conseiller IA</h3>
+                  <div className="space-y-4">
+                    <div className="flex gap-4 p-4 bg-yellow-50 rounded-2xl border border-yellow-100">
+                      <Lightbulb className="text-yellow-600 shrink-0" size={20} />
+                      <p className="text-[11px] text-yellow-800 font-medium">Vos ventes de 'Chemises' ont augmenté de 20%. Envisagez un réapprovisionnement.</p>
+                    </div>
+                    <div className="flex gap-4 p-4 bg-blue-50 rounded-2xl border border-blue-100">
+                      <Info className="text-blue-600 shrink-0" size={20} />
+                      <p className="text-[11px] text-blue-800 font-medium">Le stock de 'Jeans Denim' est critique (8 restants). Alerte envoyée aux vendeurs.</p>
+                    </div>
+                  </div>
+                  <Button variant="outline" className="w-full h-12 rounded-xl border-gray-100 font-black text-[10px] uppercase tracking-widest">Voir tous les insights</Button>
+                </Card>
+              </div>
             </div>
           </motion.div>
         )}

@@ -18,17 +18,38 @@ export default function AdminProjectsPage() {
     const storedSites = JSON.parse(localStorage.getItem('yawo_sites') || '[]');
     const storedUser = localStorage.getItem('yawo_user_name') || 'Admin';
 
-    const realProjects = storedSites.map((site: any) => ({
+    const siteProjects = storedSites.map((site: any) => ({
       id: site.id,
       name: site.name,
-      owner: storedUser, // Dans cette version locale, l'utilisateur actuel possède tout
-      type: 'Site Web', // Par défaut pour l'instant
+      owner: storedUser,
+      type: 'Site Web',
       status: site.isPaid ? 'Published' : 'Draft',
       date: site.updatedAt || new Date().toISOString(),
       paid: site.isPaid
     }));
 
-    setProjects(realProjects);
+    // Récupération des apps de gestion
+    const gestionProjects: any[] = [];
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('yawo_gestion_data_')) {
+        const owner = key.replace('yawo_gestion_data_', '');
+        const appData = JSON.parse(localStorage.getItem(key) || '{}');
+        const salesCount = (appData.sales || []).length;
+        
+        gestionProjects.push({
+          id: key,
+          name: `App de Gestion (${owner})`,
+          owner: owner,
+          type: 'Gestion',
+          status: 'Active',
+          date: new Date().toISOString(),
+          paid: true, // Simulation: si l'app existe et a des données, on considère payé
+          metrics: `${salesCount} ventes`
+        });
+      }
+    });
+
+    setProjects([...siteProjects, ...gestionProjects]);
   }, []);
 
   const filteredProjects = projects.filter(p => 

@@ -78,22 +78,40 @@ export default function ClientAppDashboard({
   const [selectedProductForEdit, setSelectedProductForEdit] = useState<Product | null>(null);
   const [saleQuantity, setSaleQuantity] = useState(1);
 
-  // Initialize data from props
+  // Persistence logic
   useEffect(() => {
-    if (initialProducts && initialProducts.length > 0) {
-      setProducts(initialProducts.map(p => ({
+    const currentUser = localStorage.getItem('yawo_user_name') || 'DemoUser';
+    const storageKey = `yawo_gestion_data_${currentUser}`;
+    const storedData = JSON.parse(localStorage.getItem(storageKey) || 'null');
+    
+    if (storedData) {
+      setProducts(storedData.products || []);
+      setSales(storedData.sales || []);
+    } else if (initialProducts && initialProducts.length > 0) {
+      const formattedInitial = initialProducts.map(p => ({
         ...p,
         price: parseFloat(p.price) || 0,
-        cost: parseFloat(p.price) * 0.6 // Mock cost as 60% of price
-      })));
+        cost: parseFloat(p.cost) || parseFloat(p.price) * 0.6
+      }));
+      setProducts(formattedInitial);
     } else {
-      setProducts([
+      const defaultProducts: Product[] = [
         { id: '1', name: 'Chemise Slim Fit', stock: 15, minStock: 5, price: 25, cost: 15 },
         { id: '2', name: 'Jean Denim Blue', stock: 8, minStock: 5, price: 45, cost: 25 },
         { id: '3', name: 'Veste Cuir Black', stock: 2, minStock: 3, price: 120, cost: 80 },
-      ]);
+      ];
+      setProducts(defaultProducts);
     }
   }, [initialProducts]);
+
+  // Save data whenever it changes
+  useEffect(() => {
+    const currentUser = localStorage.getItem('yawo_user_name') || 'DemoUser';
+    const storageKey = `yawo_gestion_data_${currentUser}`;
+    if (products.length > 0 || sales.length > 0) {
+      localStorage.setItem(storageKey, JSON.stringify({ products, sales }));
+    }
+  }, [products, sales]);
 
   // Derived Stats
   const salesToday = sales.reduce((acc, s) => acc + s.totalPrice, 0);
