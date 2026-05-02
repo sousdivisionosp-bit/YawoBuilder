@@ -8,7 +8,8 @@ import {
   Smartphone, Zap, CheckCircle2, ArrowRight, 
   Layout, ShieldCheck, Download, RefreshCw, WifiOff, CreditCard, Plus, Trash2, Save,
   PlayCircle, Bell, Info, Check, Laptop, Image as ImageIcon, Upload,
-  Settings as SettingsIcon, Database, Share2, Star, Shield, Building2, Store, Lightbulb
+  Settings as SettingsIcon, Database, Share2, Star, Shield, Building2, Store, Lightbulb,
+  QrCode, Copy
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ClientAppDashboard from '@/components/gestion/ClientAppDashboard';
@@ -811,6 +812,33 @@ export default function GestionPage() {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-10"
           >
+            {/* Real Installation Banner */}
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-[32px] p-8 text-white shadow-2xl relative overflow-hidden">
+              <div className="absolute right-0 top-0 h-full w-1/3 bg-white/10 skew-x-12 translate-x-1/2"></div>
+              <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
+                <div className="bg-white p-4 rounded-3xl shadow-xl shrink-0">
+                  <QrCode size={120} className="text-slate-900" />
+                </div>
+                <div className="flex-1 space-y-4 text-center md:text-left">
+                  <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
+                    <span className="px-3 py-1 bg-green-500 text-white text-[10px] font-black uppercase rounded-full">Mode Test Activé</span>
+                    <span className="px-3 py-1 bg-white/20 text-white text-[10px] font-black uppercase rounded-full border border-white/20">Gratuit</span>
+                  </div>
+                  <h3 className="text-2xl font-black italic">Installez votre App maintenant ! 🚀</h3>
+                  <p className="text-blue-100 font-medium max-w-xl">
+                    Scannez ce QR Code avec votre téléphone pour ouvrir votre application de gestion personnalisée et l'ajouter à votre écran d'accueil.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="flex-1 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 px-4 py-3 flex items-center justify-between gap-4">
+                      <span className="text-[10px] font-black uppercase tracking-widest truncate">yawo.app/g/{appName.toLowerCase().replace(/\s+/g, '-')}</span>
+                      <button className="p-2 hover:bg-white/20 rounded-lg transition-colors"><Copy size={16} /></button>
+                    </div>
+                    <Button className="bg-white text-blue-600 hover:bg-blue-50 font-black rounded-xl h-12 px-8">Installer sur mon mobile</Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="flex items-center gap-4">
                 <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg" style={{ backgroundColor: primaryColor }}>
